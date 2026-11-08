@@ -1,0 +1,107 @@
+name: campuscheck
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: on-failure
+    environment:
+      POSTGRES_USER: campuscheck
+      POSTGRES_PASSWORD: campuscheck_dev_pw
+      POSTGRES_DB: campuscheck
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U campuscheck -d campuscheck"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 10s
+
+  api:
+    image: node:22-bookworm-slim
+    restart: on-failure
+    working_dir: /workspace/server
+    volumes:
+      - "${BASE44_PROJECT_ROOT}:/workspace"
+      - api_node_modules:/workspace/server/node_modules
+    env_file:
+      - ./.env.base44-defaults
+      - /run/base44/app.env
+    environment:
+      - NODE_ENV=development
+      - API_PORT=4000
+      - HOST=0.0.0.0
+      - DATABASE_URL=postgres://campuscheck:campuscheck_dev_pw@db:5432/campuscheck
+      - WEB_ORIGIN=https://3000-${BASE44_PUBLIC_HOST_SUFFIX}
+      - PUBLIC_URL=https://3000-${BASE44_PUBLIC_HOST_SUFFIX}
+      - BASE44_PREVIEW_MODE
+    depends_on:
+      db:
+        condition: service_healthy
+    command:
+      - sh
+      - -ec
+      - >-
+        npm install --no-audit --no-fund --no-progress &&
+        node scripts/migrate.js &&
+        node scripts/seed.js &&
+        exec node --watch src/index.js
+    ports:
+      - "4000:4000"
+    labels:
+      base44.project: "CampusCheck API"
+      base44.kind: api
+      base44.port: "4000"
+      base44.docs: /api
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "node -e \"fetch('http://127.0.0.1:4000/api/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\"",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 120s
+
+  web:
+    image: node:22-bookworm-slim
+    restart: on-failure
+    working_dir: /workspace/client
+    volumes:
+      - "${BASE44_PROJECT_ROOT}:/workspace"
+      - web_node_modules:/workspace/client/node_modules
+    environment:
+      - BASE44_PREVIEW_MODE
+      - BASE44_PUBLIC_HOST_SUFFIX=${BASE44_PUBLIC_HOST_SUFFIX}
+      - BASE44_SANDBOX_HOST_DOMAIN=${BASE44_SANDBOX_HOST_DOMAIN}
+      - __VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS=3000-${BASE44_PUBLIC_HOST_SUFFIX}
+      - API_PROXY_TARGET=http://api:4000
+    depends_on:
+      api:
+        condition: service_healthy
+    command:
+      - sh
+      - -ec
+      - npm install --no-audit --no-fund --no-progress && exec npm run dev -- --host 0.0.0.0 --port 5173
+    ports:
+      - "3000:5173"
+    labels:
+      base44.project: "CampusCheck"
+      base44.kind: web
+      base44.port: "3000"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "node -e \"fetch('http://127.0.0.1:5173/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\"",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 90s
+
+volumes:
+  db_data:
+  api_node_modules:
+  web_node_modules:

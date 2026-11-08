@@ -1,9 +1,23 @@
+node_modules/
+dist/
+build/
+coverage/
+
+# Local env files (real secrets never live in the repo)
+.env
+.env.local
+.env.*.local
+!.env.base44-defaults
+
+# OS / editors
+.DS_Store
+*.log
+npm-debug.log*
+
+# Legacy leftovers kept out of the way
 .vagrant
 /cookbooks
-
-# Bundler
 bin/*
 .bundle/*
-
 .kitchen/
 .kitchen.local.yml

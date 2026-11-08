@@ -1,0 +1,28 @@
+{
+  "name": "campuscheck-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "CampusCheck attendance API (Express + PostgreSQL)",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "migrate": "node scripts/migrate.js",
+    "seed": "node scripts/seed.js",
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "exceljs": "^4.4.0",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^6.9.16",
+    "pg": "^8.13.1",
+    "qrcode": "^1.5.4",
+    "zod": "^3.24.1"
+  }
+}
