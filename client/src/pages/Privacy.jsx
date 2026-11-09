@@ -20,7 +20,7 @@ export default function Privacy() {
           <section className="card">
             <h2>What we collect</h2>
             <ul className="small">
-              <li>Your name, university email, matric or staff number, programme, level and department.</li>
+              <li>Your name, email, matric or staff number, programme, level and department.</li>
               <li>The courses you are enrolled in.</li>
               <li>Attendance: status (present, late, absent, excused), time of check-in, and whether you used a QR scan or a six-digit code.</li>
               <li>A device identifier: a random value created by your browser, stored only as a one-way hash so that we can detect one phone being used to check in several students.</li>

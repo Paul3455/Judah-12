@@ -36,7 +36,7 @@ export function clearAuthCookies(res) {
 
 const PROFILE_SQL = `
   select u.id, u.name, u.email, u.role, u.status, u.department_id, u.email_verified_at, u.created_at,
-         d.name as department_name, d.code as department_code,
+         coalesce(d.name, st.department) as department_name, d.code as department_code,
          st.matric_number, st.program, st.level,
          lec.staff_id
   from users u
@@ -69,7 +69,7 @@ export async function authenticate(req, res, next) {
       throw new HttpError(403, 'This account is suspended. Contact your administrator.', 'account_suspended');
     }
     if (user.status !== 'active') {
-      throw new HttpError(403, 'Verify your university email to continue.', 'email_unverified');
+      throw new HttpError(403, 'Verify your email to continue.', 'email_unverified');
     }
 
     req.user = user;

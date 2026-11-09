@@ -43,7 +43,7 @@ users 1─* audit_logs (actor)
 | --- | --- | --- |
 | id | uuid PK | |
 | name | text | |
-| email | text | unique on `lower(email)`; university domain validated at sign-up |
+| email | text | unique on `lower(email)`; any address accepted at sign-up |
 | password_hash | text | bcrypt |
 | role | text | `student` \| `lecturer` \| `admin` |
 | department_id | uuid → departments | |
@@ -58,6 +58,7 @@ users 1─* audit_logs (actor)
 | matric_number | text unique | |
 | program | text | |
 | level | int | 100–700 |
+| department | text | typed by the student at sign-up; the official `department_id` link is set later by an admin |
 
 ### `lecturers`
 | Column | Type | Notes |

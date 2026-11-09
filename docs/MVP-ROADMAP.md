@@ -12,7 +12,7 @@ Everything marked ✅ is implemented and running in this repository: API, databa
 | # | Item | Pri |
 | --- | --- | --- |
 | 1 | Postgres schema + migrations + seed | P0 ✅ |
-| 2 | Email/password sign-up restricted to university domains | P0 ✅ |
+| 2 | Email/password sign-up with any email address and a free-text department | P0 ✅ |
 | 3 | Email verification (single-use token, 24 h) | P0 ✅ |
 | 4 | JWT access (15 min) + rotating refresh (7 d) in httpOnly cookies | P0 ✅ |
 | 5 | Role middleware + per-object ownership checks | P0 ✅ |
@@ -77,7 +77,7 @@ Everything marked ✅ is implemented and running in this repository: API, databa
 
 ### Phase 1 — Authentication and roles
 1. `users`/`students`/`lecturers`/`refresh_tokens`/`email_verification_tokens` tables.
-2. bcrypt hashing, university-domain validation, verification token (hashed, single-use).
+2. bcrypt hashing, verification token (hashed, single-use).
 3. Access/refresh cookies, rotation, revocation, `GET /auth/me`.
 4. `authenticate` + `requireRole` middleware; ownership helpers on courses and sessions.
 5. Rate limits; same-origin check on mutations; security headers.

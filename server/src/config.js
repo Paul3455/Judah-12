@@ -31,11 +31,6 @@ export const config = {
   seedDemo: flag(process.env.SEED_DEMO, false),
   devVerificationLinks: process.env.ALLOW_DEV_VERIFICATION_LINK !== '0',
 
-  universityEmailDomains: (process.env.UNIVERSITY_EMAIL_DOMAINS || 'campus.edu,student.campus.edu')
-    .split(',')
-    .map((d) => d.trim().toLowerCase())
-    .filter(Boolean),
-
   webOrigin,
   publicUrl: process.env.PUBLIC_URL || webOrigin,
 

@@ -70,19 +70,19 @@ export default function Login() {
             <Link to="/privacy" style={{ color: '#e0f2fe' }}>
               Privacy notice
             </Link>{' '}
-            · University email required
+            · Student self sign-up
           </p>
         </div>
 
         <div className="auth-body">
           <h1 style={{ marginBottom: 4 }}>Sign in</h1>
           <p className="small muted" style={{ marginBottom: 18 }}>
-            Use your university account to continue.
+            Use your account to continue.
           </p>
 
           <form className="stack" onSubmit={submit}>
             <div className="field">
-              <label htmlFor="email">University email</label>
+              <label htmlFor="email">Email</label>
               <input
                 id="email"
                 className="input"
@@ -92,7 +92,7 @@ export default function Login() {
                 required
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                placeholder="you@campus.edu"
+                placeholder="you@example.com"
               />
             </div>
             <div className="field">
@@ -137,7 +137,7 @@ export default function Login() {
           <hr className="divider" />
           <p className="small muted">
             New student?{' '}
-            <Link to="/register">Create an account</Link> with your university email.
+            <Link to="/register">Create an account</Link> with any email address.
           </p>
         </div>
       </div>

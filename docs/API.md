@@ -22,7 +22,7 @@ Base URL `/api`. JSON in, JSON out (exports return files). Auth uses two httpOnl
 
 | Method | Path | Roles | Notes |
 | --- | --- | --- | --- |
-| POST | `/register` | public | `{name,email,password,matricNumber,program,level}` — student only, university email domain required. Returns `{user, verificationUrl}` in dev. |
+| POST | `/register` | public | `{name,email,password,matricNumber,program,level,department}` — student only, any email address accepted. Returns `{user, verificationUrl}` in dev. |
 | POST | `/verify-email` | public | `{token}` → activates account. |
 | POST | `/login` | public | `{email,password}` → sets cookies, returns `{user}`. 10 attempts / 15 min / IP. |
 | POST | `/refresh` | cookie | Rotates refresh token, issues a new access token. |

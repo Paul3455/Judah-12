@@ -234,7 +234,7 @@ function CreatePerson({ departments, onClose, onCreated }) {
           <input id="c-name" className="input" required value={form.name} onChange={update('name')} />
         </div>
         <div className="field">
-          <label htmlFor="c-email">University email</label>
+          <label htmlFor="c-email">Email</label>
           <input id="c-email" className="input" type="email" required value={form.email} onChange={update('email')} placeholder="name@campus.edu" />
         </div>
         <div className="field">

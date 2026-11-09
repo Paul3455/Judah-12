@@ -56,7 +56,7 @@ Every check is enforced server-side. Object ownership is verified on each reques
 ## 6. Functional requirements
 
 ### 6.1 Authentication
-- FR-1 Email + password sign-up for students, restricted to university email domains (`UNIVERSITY_EMAIL_DOMAINS`).
+- FR-1 Email + password sign-up for students with any email address; department is typed in freely at sign-up (universities run far more departments than the curated list).
 - FR-2 Email verification required before first login; verification link is single-use and expires in 24 h.
 - FR-3 Passwords hashed with bcrypt (cost 10). Minimum 8 characters.
 - FR-4 Short-lived access token (15 min, httpOnly cookie) + rotating refresh token (7 days, httpOnly cookie, hashed at rest, revocable).
@@ -119,7 +119,7 @@ Every check is enforced server-side. Object ownership is verified on each reques
 
 ## 8. Privacy
 
-- Collected: name, university email, matric/staff number, programme, level, department, enrolment, attendance status and timestamps, check-in method, device hash (HMAC of a random client id — not a hardware id), and a distance-in-metres for geofenced check-ins.
+- Collected: name, email, matric/staff number, programme, level, department, enrolment, attendance status and timestamps, check-in method, device hash (HMAC of a random client id — not a hardware id), and a distance-in-metres for geofenced check-ins.
 - **Not** collected: raw GPS traces, continuous location, contacts, photos, biometrics.
 - Location data is never stored as coordinates; only `location_verified` + `location_distance_m` on the record that needed it.
 - Retention: attendance records and location verification fields are deleted or anonymised after the configured period (default 365 days; admins can change it). Audit logs retained 24 months.

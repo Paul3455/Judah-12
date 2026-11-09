@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import crypto from 'node:crypto';
 import { z } from 'zod';
 import { config } from '../config.js';
-import { many, one, query, tx } from '../db.js';
+import { one, query, tx } from '../db.js';
 import { HttpError, wrap } from '../middleware/errors.js';
 import { rateLimit } from '../middleware/rateLimit.js';
 import {
@@ -50,7 +50,7 @@ async function issueVerification(userId, email, name) {
   const result = await sendMail({
     to: email,
     subject: 'Verify your CampusCheck email',
-    text: `Hello ${name},\n\nConfirm your university email to activate your CampusCheck account:\n${url}\n\nThis link expires in 24 hours. If you did not sign up, ignore this email.`,
+    text: `Hello ${name},\n\nConfirm your email to activate your CampusCheck account:\n${url}\n\nThis link expires in 24 hours. If you did not sign up, ignore this email.`,
   });
   return { url, delivered: result.delivered };
 }
@@ -62,7 +62,7 @@ const registerSchema = z.object({
   matricNumber: z.string().trim().min(3).max(40),
   program: z.string().trim().min(2).max(120),
   level: z.coerce.number().int().min(100).max(700),
-  departmentId: z.string().uuid().optional(),
+  department: z.string().trim().min(2).max(120).optional(),
 });
 
 router.post(
@@ -71,15 +71,6 @@ router.post(
   wrap(async (req, res) => {
     const input = registerSchema.parse(req.body);
     const email = input.email.toLowerCase();
-    const domain = email.split('@')[1];
-
-    if (!config.universityEmailDomains.includes(domain)) {
-      throw new HttpError(
-        400,
-        `Use your university email address (${config.universityEmailDomains.map((d) => `@${d}`).join(' or ')}).`,
-        'email_domain',
-      );
-    }
 
     const existing = await one('select id from users where lower(email) = $1', [email]);
     if (existing) throw new HttpError(409, 'An account with that email already exists.', 'email_taken');
@@ -88,14 +79,14 @@ router.post(
 
     const user = await tx(async (client) => {
       const inserted = await client.query(
-        `insert into users (name, email, password_hash, role, department_id, status)
-         values ($1, $2, $3, 'student', $4, 'pending') returning id, name, email, role, status`,
-        [input.name, email, passwordHash, input.departmentId || null],
+        `insert into users (name, email, password_hash, role, status)
+         values ($1, $2, $3, 'student', 'pending') returning id, name, email, role, status`,
+        [input.name, email, passwordHash],
       );
       const row = inserted.rows[0];
       await client.query(
-        `insert into students (user_id, matric_number, program, level) values ($1, $2, $3, $4)`,
-        [row.id, input.matricNumber, input.program, input.level],
+        `insert into students (user_id, matric_number, program, level, department) values ($1, $2, $3, $4, $5)`,
+        [row.id, input.matricNumber, input.program, input.level, input.department || null],
       );
       await client.query(
         `insert into audit_logs (actor_id, action, entity_type, entity_id, new_value)
@@ -109,7 +100,7 @@ router.post(
 
     res.status(201).json({
       user,
-      message: 'Check your university email to verify your account.',
+      message: 'Check your email to verify your account.',
       verificationUrl: config.devVerificationLinks ? verification.url : undefined,
       emailDelivered: verification.delivered,
     });
@@ -187,7 +178,7 @@ router.post(
       throw new HttpError(403, 'This account is suspended. Contact your administrator.', 'account_suspended');
     }
     if (user.status === 'pending') {
-      throw new HttpError(403, 'Verify your university email before signing in.', 'email_unverified');
+      throw new HttpError(403, 'Verify your email before signing in.', 'email_unverified');
     }
 
     const refreshToken = await issueRefreshToken(user.id, req);
@@ -266,15 +257,6 @@ router.post(
     });
 
     res.json({ ok: true, message: 'Password updated. Please sign in again on other devices.' });
-  }),
-);
-
-/** Public: departments for the sign-up form. */
-router.get(
-  '/departments',
-  wrap(async (req, res) => {
-    const departments = await many('select id, name, code from departments order by name');
-    res.json({ departments });
   }),
 );
 

@@ -13,7 +13,7 @@ router.use(authenticate, requireRole('admin'));
 
 const USER_SELECT = `
   select u.id, u.name, u.email, u.role, u.status, u.department_id, u.created_at, u.email_verified_at,
-         d.name as department_name, d.code as department_code,
+         coalesce(d.name, st.department) as department_name, d.code as department_code,
          st.matric_number, st.program, st.level, lec.staff_id,
          (select count(*)::int from enrollments e where e.student_id = u.id) as course_count
   from users u

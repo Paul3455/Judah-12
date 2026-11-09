@@ -21,7 +21,6 @@ CampusCheck is three containers: `web` (React + Vite), `api` (Node/Express), `db
 | `JWT_SECRET` | yes | ≥ 32 random bytes; signs access tokens |
 | `QR_SIGNING_SECRET` | yes | ≥ 32 random bytes; derives rotating check-in codes. Rotating it invalidates in-flight codes only |
 | `DEVICE_HASH_SECRET` | yes | HMAC key for device ids (never store raw device ids) |
-| `UNIVERSITY_EMAIL_DOMAINS` | yes | comma-separated, e.g. `campus.edu,student.campus.edu` |
 | `WEB_ORIGIN` | yes in production | public origin, used for CORS links in emails |
 | `WARNING_THRESHOLD` | no | default `75` |
 | `DEFAULT_RETENTION_DAYS` | no | default `365` |
@@ -80,7 +79,6 @@ Audit logs are kept 24 months independent of attendance retention so deletions s
 - [ ] `NODE_ENV=production`, `SEED_DEMO` unset.
 - [ ] HTTPS enforced, `Secure` cookies, HSTS at the proxy.
 - [ ] Database not publicly reachable; least-privilege DB role (no `SUPERUSER`).
-- [ ] University email domain list contains only real domains.
 - [ ] Retention period approved by the institution's data protection officer.
 - [ ] Privacy notice URL published and linked from check-in and sign-up.
 - [ ] Backups verified by an actual restore.

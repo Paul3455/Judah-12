@@ -93,7 +93,6 @@ win over the committed development placeholders in `.env.base44-defaults`:
 | `JWT_SECRET` | signs access tokens |
 | `QR_SIGNING_SECRET` | signs rotating QR payloads |
 | `DEVICE_HASH_SECRET` | HMACs the per-install device id |
-| `UNIVERSITY_EMAIL_DOMAINS` | email domains allowed to sign up (`campus.edu,student.campus.edu`) |
 | `WARNING_THRESHOLD`, `DEFAULT_RETENTION_DAYS` | initial policy values (editable in the admin UI) |
 | `SEED_DEMO` | `1` seeds demo data on an empty database |
 | `SMTP_HOST/PORT/USER/PASS/FROM` | optional; without them email is written to the API log and in-app notifications still work |

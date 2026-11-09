@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../lib/api.js';
 import { Alert, Spinner } from '../components/ui.jsx';
 
 export default function Register() {
   const navigate = useNavigate();
-  const [departments, setDepartments] = useState([]);
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -13,19 +12,12 @@ export default function Register() {
     matric_number: '',
     program: '',
     level: '300',
-    department_id: '',
+    department: '',
   });
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState(null);
-
-  useEffect(() => {
-    api
-      .get('/auth/departments')
-      .then((payload) => setDepartments(payload.departments))
-      .catch(() => setDepartments([]));
-  }, []);
 
   const update = (key) => (event) => setForm((current) => ({ ...current, [key]: event.target.value }));
 
@@ -42,7 +34,7 @@ export default function Register() {
         matricNumber: form.matric_number,
         program: form.program,
         level: Number(form.level),
-        departmentId: form.department_id || undefined,
+        department: form.department.trim() || undefined,
       });
       setResult(payload);
     } catch (err) {
@@ -58,7 +50,7 @@ export default function Register() {
     return (
       <div className="auth-layout">
         <div className="auth-card">
-          <h1 style={{ marginBottom: 8 }}>Check your university email</h1>
+          <h1 style={{ marginBottom: 8 }}>Check your email</h1>
           <p className="small muted" style={{ marginBottom: 16 }}>
             We sent a verification link to <strong>{result.user.email}</strong>. The link expires in 24 hours.
           </p>
@@ -100,8 +92,8 @@ export default function Register() {
           </div>
 
           <div className="field">
-            <label htmlFor="email">University email</label>
-            <input id="email" className="input" type="email" required value={form.email} onChange={update('email')} placeholder="you@campus.edu" autoComplete="email" />
+            <label htmlFor="email">Email</label>
+            <input id="email" className="input" type="email" required value={form.email} onChange={update('email')} placeholder="you@example.com" autoComplete="email" />
             {fieldErrors.email ? <span className="tiny" style={{ color: 'var(--danger)' }}>{fieldErrors.email}</span> : null}
           </div>
 
@@ -129,14 +121,14 @@ export default function Register() {
             </div>
             <div className="field">
               <label htmlFor="department">Department</label>
-              <select id="department" className="select" value={form.department_id} onChange={update('department_id')}>
-                <option value="">Select…</option>
-                {departments.map((department) => (
-                  <option key={department.id} value={department.id}>
-                    {department.code} — {department.name}
-                  </option>
-                ))}
-              </select>
+              <input
+                id="department"
+                className="input"
+                required
+                value={form.department}
+                onChange={update('department')}
+                placeholder="e.g. Mass Communication"
+              />
             </div>
           </div>
 
@@ -157,7 +149,7 @@ export default function Register() {
           </div>
 
           <p className="tiny muted">
-            We collect your name, university email, matric number, programme and attendance records. Location is used
+            We collect your name, email, matric number, programme and attendance records. Location is used
             only to confirm you are in the venue when your lecturer enables it, and only the distance is stored.{' '}
             <Link to="/privacy">Privacy notice</Link>
           </p>

@@ -27,6 +27,8 @@ committed, written by that first install).
 
 ## Data
 
+- Migrations in `server/db/migrations` run automatically when the `api` container starts (`node scripts/migrate.js`),
+  so a new `.sql` file only needs `docker compose -f docker-compose.base44.yml up -d` (or `restart api`).
 - Postgres has **no published host port**; use
   `docker compose -f docker-compose.base44.yml exec -T db psql -U campuscheck -d campuscheck`.
 - Demo data seeds **only when `users` is empty** (`SEED_DEMO=1` in `.env.base44-defaults`). Re-seeding means
